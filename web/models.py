@@ -5,7 +5,7 @@ User = get_user_model()
 
 
 class Genre(models.Model):
-    genre_name = models.CharField(max_length=64)
+    genre_name = models.CharField(max_length=64, unique=True)
 
 
 class Book(models.Model):
