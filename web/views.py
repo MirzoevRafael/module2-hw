@@ -1,6 +1,8 @@
 import os
-from django.shortcuts import render
-from web.forms import RegistrationForm
+
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from web.forms import RegistrationForm, AuthForm
 from web.models import User
 
 
@@ -21,3 +23,17 @@ def registration_view(request):
             is_success = True
             print(form.cleaned_data)
     return render(request, os.path.join("web", "registration.html"), {"form": form, "is_success": is_success})
+
+
+def auth_view(request):
+    form = AuthForm()
+    if request.method == 'POST':
+        form = AuthForm(data=request.POST)
+        if form.is_valid():
+            user = authenticate(**form.cleaned_data)
+            if user is None:
+                form.add_error(None, 'Введены неверные данные!')
+            else:
+                login(request, user)
+                return redirect('main')
+    return render(request, os.path.join("web", "auth.html"), {"form": form})
